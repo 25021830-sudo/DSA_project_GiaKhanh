@@ -21,6 +21,9 @@ public class Merge {
   }
 
   private static void sort(Comparable[] a, Comparable[] aux, int lo, int hi) {
+    if (hi <= lo) {
+      return;
+    }
     if (hi <= lo + CUTOFF - 1){
       Insertion.sort(a, lo, hi);
       return;
@@ -32,6 +35,9 @@ public class Merge {
   }
 
   public static void sort(Comparable[] a) {
+    if (a == null || a.length <= 1) {
+      return;
+    }
     Comparable[] aux = new Comparable[a.length];
     sort(a, aux, 0, a.length - 1);
   }

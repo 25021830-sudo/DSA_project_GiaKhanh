@@ -4,14 +4,9 @@ public class Insertion {
 
   //mang sx tu low denm high bang insertion sort
   public static void sort(Comparable[] a, int low, int high) {
-    int N = a.length;
-    for (int i = low; i <= high; i++) {
-      for (int j = i; j > low && less(a[j], a[j-1]) ; j--) {
-        if (less(a[j], a[j - 1])) {
-          exch(a, j, j - 1);
-        } else {
-          break;
-        }
+    for (int i = low + 1; i <= high; i++) {
+      for (int j = i; j > low && less(a[j], a[j - 1]); j--) {
+        exch(a, j, j - 1);
       }
     }
   }

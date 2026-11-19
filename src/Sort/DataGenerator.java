@@ -5,11 +5,14 @@ import java.io.IOException;
 import java.util.Random;
 
 public class DataGenerator {
+  public static final long SEED = 12345L;
+  public static final String DATA_DIR = "data/";
+  public static final String[] TYPES = {"random", "sorted", "reverse", "few_unique"};
 
   // Hàm sinh mảng trong RAM để lát nữa Benchmark chạy trực tiếp
   public static Integer[] generate(int n, String type) {
     Integer[] arr = new Integer[n];
-    Random rand = new Random();
+    Random rand = new Random(SEED);
 
     for (int i = 0; i < n; i++) {
       switch (type.toLowerCase()) {
@@ -26,7 +29,7 @@ public class DataGenerator {
           arr[i] = rand.nextInt(5); // Chỉ quẩn quanh 5 giá trị (Nhiều phần tử trùng lặp)
           break;
         default:
-          arr[i] = 0;
+          throw new IllegalArgumentException("Loai du lieu khong hop le: " + type);
       }
     }
     return arr;
@@ -48,22 +51,17 @@ public class DataGenerator {
   }
 
   public static void main(String[] args) {
-    int size = 10000;
+    new java.io.File(DATA_DIR).mkdirs();
 
-    // 1. Khai báo đường dẫn thư mục
-    String folderPath = "src/data/";
-
-    // 2. Lệnh tự động tạo thư mục "data" nếu nó chưa tồn tại
-    java.io.File directory = new java.io.File("data");
-    if (!directory.exists()) {
-      directory.mkdir();
-      System.out.println("Đã tạo thư mục: data/");
+    int[] sizes = {10000};
+    if (args.length > 0 && args[0].equals("full")) {
+      sizes = new int[]{10000, 100000, 500000, 1000000};
     }
-
-    // 3. Nối folderPath vào trước tên file để đẩy file vào đúng thư mục
-    exportToCSV(generate(size, "random"), folderPath + "data_10k_random.csv");
-    exportToCSV(generate(size, "sorted"), folderPath + "data_10k_sorted.csv");
-    exportToCSV(generate(size, "reverse"), folderPath + "data_10k_reverse.csv");
-    exportToCSV(generate(size, "few_unique"), folderPath + "data_10k_few_unique.csv");
+    for (int size : sizes) {
+      String label = (size % 1000 == 0 && size < 1000000) ? (size / 1000) + "k" : "1M";
+      for (String type : TYPES) {
+        exportToCSV(generate(size, type), DATA_DIR + "data_" + label + "_" + type + ".csv");
+      }
+    }
   }
 }
